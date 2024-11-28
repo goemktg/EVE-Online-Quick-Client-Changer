@@ -5,8 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EVE_Online_Quick_Client_Changer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="빠른 클라 전환기" 
+        Height="350" 
+        Width="320"
+        MinHeight="350"
+        MinWidth="320">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="140"/>
+        </Grid.ColumnDefinitions>
+        <ListView
+            Grid.Column="0">
+        </ListView>
+        <Grid
+            Grid.Column="1">
+            <StackPanel
+                Orientation="Vertical">
+                <Label
+                    Content="클라명 :"/>
+                <Label
+                    Content="설정된 키:"/>
+                <StackPanel
+                    Margin="6,0,0,0"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Text="KV :"/>
+                    <TextBlock
+                        Text="KID :"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel
+                VerticalAlignment="Bottom"
+                Margin="6,0,6,6">
+                <Button
+                    Height="40"
+                    Content="클라이언트 키 지정"/>
+                <Button
+                    Height="40"
+                    Margin="0,5,0,0" 
+                    Content="클라이언트 리로드"/>
+                <Button 
+                    Height="40"
+                    Margin="0,5,0,0"
+                    Content="저장"/>
+                <Button
+                    Margin="0,5,0,0" 
+                    Content="초기화"/>
+                <Button
+                    Margin="0,5,0,0" 
+                    Content="단축키 미동작중"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
