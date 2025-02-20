@@ -27,6 +27,12 @@ namespace EVE_Online_Quick_Client_Changer
 
         private void LoadListBoxData()
         {
+            // Disable reload button while loading
+            btnClientReload.IsEnabled = false;
+
+            // Clear listbox data
+            EveClients.Clear();
+
             // Search for all EVE Online clients
             System.Diagnostics.Process[] eveProcesses = System.Diagnostics.Process.GetProcessesByName("exefile");
 
@@ -50,6 +56,38 @@ namespace EVE_Online_Quick_Client_Changer
 
             // Load data to listbox
             lbEveClients.ItemsSource = EveClients;
+            lbEveClients.Items.Refresh();
+
+            // Enable reload button after loading
+            btnClientReload.IsEnabled = true;
+        }
+
+        // Button click events
+        private void ButtonClickEventsHandler(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                switch (button.Name)
+                {
+                    case "btnClientReload":
+                        // "클라이언트 리로드" 버튼 클릭
+                        // Reload client list
+                        LoadListBoxData();
+                        break;
+                    case "btnClientSetKey":
+                        // "클라이언트 키 지정" 버튼 클릭
+                        // Set hotkey for selected client
+                        break;
+                    case "btnReset":
+                        // "초기화" 버튼 클릭
+                        // Nuke all settings ( need comfirm window )
+                        break;
+                    case "btnToggleHotkeys":
+                        // "단축키 동작중" / "단축키 미동작중" 버튼 클릭
+                        // Toggle hotkey usage
+                        break;
+                }
+            }
         }
     }
 
