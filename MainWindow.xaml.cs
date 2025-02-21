@@ -16,41 +16,77 @@ namespace EVE_Online_Quick_Client_Changer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<EveClientData> EveClients = [];
+        public List<EveClientData> EveClients;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            LoadListBoxData();
+            // Load settings from file
+            // Disable reload button while loading to prevent bad things happen
+            btnClientReload.IsEnabled = false;
+            EveClients = SettingsHandler.LoadSettings();
+            btnClientReload.IsEnabled = true;
+
+            LoadEveClients();
+
+
+            // TODO: Add form closing event: Compare Between settings.json and current settings
+            // and ask user to save settings if there is any difference
+            // Text will be: "저장되지 않은 변경사항이 있습니다. 저장하시겠습니까?"
         }
 
-        private void LoadListBoxData()
+        private void LoadEveClients()
         {
             // Disable reload button while loading
             btnClientReload.IsEnabled = false;
 
-            // Clear listbox data
-            EveClients.Clear();
-
+            // Create keyMap for current eve online processes
             // Search for all EVE Online clients
             System.Diagnostics.Process[] eveProcesses = System.Diagnostics.Process.GetProcessesByName("exefile");
-
-            string hotKeyNamePlaceholder = "없음";
-            int hotKeyIDPlaceholder = -1;
-
+            Dictionary<string, int> eveClientsPairs = [];
             foreach (System.Diagnostics.Process process in eveProcesses)
             {
                 // skip EVE clients in login screen
                 if (process.MainWindowTitle == "EVE")
                     continue;
 
-                EveClients.Add(new EveClientData()
+                eveClientsPairs.Add(process.MainWindowTitle, process.Id);
+            }
+
+            // Loop through ALL saved clients 
+            foreach (EveClientData client in EveClients)
+            {
+                // Check if client is still running
+                if (eveClientsPairs.ContainsKey(client.MainWindowTitle))
                 {
-                    ProcessID = process.Id,
-                    MainWindowTitle = process.MainWindowTitle,
-                    HotKeyName = hotKeyNamePlaceholder,
-                    HotKeyID = hotKeyIDPlaceholder
+                    // Update process ID
+                    client.ProcessID = eveClientsPairs[client.MainWindowTitle];
+                    // Update color
+                    client.TextColor = "Black";
+                    // Remove from Dictionary
+                    eveClientsPairs.Remove(client.MainWindowTitle);
+                }
+                else
+                {
+                    // Gray out text if client is not running
+                    client.TextColor = "Gray";
+                }
+            }
+
+            // Loop through remaining clients
+            foreach (KeyValuePair<string, int> client in eveClientsPairs)
+            {
+                // Add new client to list
+                EveClients.Add(new EveClientData
+                {
+                    ProcessID = client.Value,
+                    MainWindowTitle = client.Key,
+
+                    // It is placeholder value
+                    HotKeyName = "없음",
+                    HotKeyID = -1,
+                    TextColor = "Black"
                 });
             }
 
@@ -72,11 +108,16 @@ namespace EVE_Online_Quick_Client_Changer
                     case "btnClientReload":
                         // "클라이언트 리로드" 버튼 클릭
                         // Reload client list
-                        LoadListBoxData();
+                        LoadEveClients();
                         break;
                     case "btnClientSetKey":
                         // "클라이언트 키 지정" 버튼 클릭
                         // Set hotkey for selected client
+                        break;
+                    case "btnSave":
+                        // "저장" 버튼 클릭
+                        // Save settings as JSON settings
+                        SettingsHandler.SaveSettings(EveClients);
                         break;
                     case "btnReset":
                         // "초기화" 버튼 클릭
@@ -93,9 +134,10 @@ namespace EVE_Online_Quick_Client_Changer
 
     public class EveClientData
     {
-        public int ProcessID { get; set; }
+        public required int ProcessID { get; set; }
         public required string MainWindowTitle { get; set; }
         public required string HotKeyName { get; set; }
-        public int HotKeyID { get; set; }
+        public required int HotKeyID { get; set; }
+        public required string TextColor { get; set; }
     }
 }

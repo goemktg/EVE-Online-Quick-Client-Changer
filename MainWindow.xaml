@@ -19,7 +19,7 @@
             Grid.Column="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding MainWindowTitle}"/>
+                    <TextBlock Text="{Binding MainWindowTitle}" Foreground="{Binding TextColor}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -50,6 +50,10 @@
                     Height="40"
                     Margin="0,5,0,0" 
                     Content="클라이언트 리로드" Click="ButtonClickEventsHandler"/>
+                <Button Name="btnSave"
+                    Height="40"
+                    Margin="0,5,0,0"
+                    Content="저장"  Click="ButtonClickEventsHandler"/>
                 <Button
                     Margin="0,5,0,0" 
                     Content="초기화"/>
