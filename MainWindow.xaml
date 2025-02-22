@@ -9,7 +9,9 @@
         Height="350" 
         Width="320"
         MinHeight="350"
-        MinWidth="320">
+        MinWidth="320"
+        Closing="Window_Closing"
+        Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

@@ -20,7 +20,7 @@ namespace EVE_Online_Quick_Client_Changer
     public partial class GetKeyWindow : Window
     {
         public string HotKeyName { get; private set; }
-        public int HotKeyID { get; private set; }
+        public uint HotKeyVirtualKeyCode { get; private set; }
 
         public GetKeyWindow()
         {
@@ -33,7 +33,7 @@ namespace EVE_Online_Quick_Client_Changer
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             HotKeyName = e.Key.ToString();
-            HotKeyID = (int)e.Key;
+            HotKeyVirtualKeyCode = (uint)KeyInterop.VirtualKeyFromKey(e.Key);
             DialogResult = true;
             Close();
         }
