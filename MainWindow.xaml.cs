@@ -16,7 +16,7 @@ namespace EVE_Online_Quick_Client_Changer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<EveClientData> EveClients;
+        private List<EveClientData> EveClients;
 
         public MainWindow()
         {
@@ -110,9 +110,27 @@ namespace EVE_Online_Quick_Client_Changer
                         // Reload client list
                         LoadEveClients();
                         break;
-                    case "btnClientSetKey":
+                    case "btnSetClientKey":
                         // "클라이언트 키 지정" 버튼 클릭
                         // Set hotkey for selected client
+
+                        // SelectedIndex Will return -1 if no item is selected
+                        if (lbEveClients.SelectedIndex == -1)
+                        {
+                            MessageBox.Show("단축키를 지정할 클라이언트가 선택되지 않았습니다.");
+                            return;
+                        }
+
+                        GetKeyWindow getKeyWindow = new();
+                        bool? result = getKeyWindow.ShowDialog();
+
+                        // success
+                        if (result == true)
+                        {
+                            string hotKeyName = getKeyWindow.HotKeyName;
+                            int hotKeyID = getKeyWindow.HotKeyID;
+                            MessageBox.Show($"Hotkey: {hotKeyName} ({hotKeyID})");
+                        }
                         break;
                     case "btnSave":
                         // "저장" 버튼 클릭
@@ -129,6 +147,11 @@ namespace EVE_Online_Quick_Client_Changer
                         break;
                 }
             }
+        }
+
+        private void lbEveClients_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 

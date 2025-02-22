@@ -16,7 +16,8 @@
             <ColumnDefinition Width="140"/>
         </Grid.ColumnDefinitions>
         <ListBox Name="lbEveClients"
-            Grid.Column="0">
+            Grid.Column="0"
+            SelectionChanged="lbEveClients_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding MainWindowTitle}" Foreground="{Binding TextColor}"/>
@@ -43,17 +44,20 @@
             <StackPanel
                 VerticalAlignment="Bottom"
                 Margin="6,0,6,6">
-                <Button
+                <Button Name="btnSetClientKey"
                     Height="40"
-                    Content="클라이언트 키 지정"/>
+                    Content="클라이언트 키 지정"
+                    Click="ButtonClickEventsHandler"/>
                 <Button Name="btnClientReload"
                     Height="40"
                     Margin="0,5,0,0" 
-                    Content="클라이언트 리로드" Click="ButtonClickEventsHandler"/>
+                    Content="클라이언트 리로드" 
+                    Click="ButtonClickEventsHandler"/>
                 <Button Name="btnSave"
                     Height="40"
                     Margin="0,5,0,0"
-                    Content="저장"  Click="ButtonClickEventsHandler"/>
+                    Content="저장"
+                    Click="ButtonClickEventsHandler"/>
                 <Button
                     Margin="0,5,0,0" 
                     Content="초기화"/>
