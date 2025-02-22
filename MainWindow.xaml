@@ -28,18 +28,10 @@
             Grid.Column="1">
             <StackPanel
                 Orientation="Vertical">
-                <Label
-                    Content="클라명 :"/>
-                <Label
+                <Label Name="lblSelectedClientName"
+                    Content="클라명 : "/>
+                <Label Name="lblSelectedClientHotKey"
                     Content="설정된 키:"/>
-                <StackPanel
-                    Margin="6,0,0,0"
-                    Orientation="Vertical">
-                    <TextBlock
-                        Text="KV :"/>
-                    <TextBlock
-                        Text="KID :"/>
-                </StackPanel>
             </StackPanel>
             <StackPanel
                 VerticalAlignment="Bottom"

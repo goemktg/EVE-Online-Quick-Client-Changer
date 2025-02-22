@@ -30,6 +30,12 @@ namespace EVE_Online_Quick_Client_Changer
 
             LoadEveClients();
 
+            // Disable SetClientKey button if no client is selected
+            if (lbEveClients.SelectedIndex == -1)
+            {
+                btnSetClientKey.IsEnabled = false;
+            }
+
 
             // TODO: Add form closing event: Compare Between settings.json and current settings
             // and ask user to save settings if there is any difference
@@ -124,12 +130,22 @@ namespace EVE_Online_Quick_Client_Changer
                         GetKeyWindow getKeyWindow = new();
                         bool? result = getKeyWindow.ShowDialog();
 
-                        // success
                         if (result == true)
                         {
                             string hotKeyName = getKeyWindow.HotKeyName;
                             int hotKeyID = getKeyWindow.HotKeyID;
-                            MessageBox.Show($"Hotkey: {hotKeyName} ({hotKeyID})");
+
+                            // Update selected client hotkey
+                            EveClients[lbEveClients.SelectedIndex].HotKeyName = hotKeyName;
+                            EveClients[lbEveClients.SelectedIndex].HotKeyID = hotKeyID;
+
+                            // Reload data to listbox
+                            lbEveClients.ItemsSource = EveClients;
+                            lbEveClients.Items.Refresh();
+
+                            // Refresh selected client info
+                            // TODO: Better way to do this?
+                            lbEveClients_SelectionChanged(lbEveClients, null);
                         }
                         break;
                     case "btnSave":
@@ -149,9 +165,22 @@ namespace EVE_Online_Quick_Client_Changer
             }
         }
 
-        private void lbEveClients_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void lbEveClients_SelectionChanged(object sender, SelectionChangedEventArgs? e)
         {
+            if (lbEveClients.SelectedIndex == -1)
+            {
+                btnSetClientKey.IsEnabled = false;
+            }
+            else
+            {
+                btnSetClientKey.IsEnabled = true;
+            }
 
+            // Update selected client info
+            // Split by space and get 3rd element
+            // EVE - Goem Funila -> Goem Funaila
+            lblSelectedClientName.Content = "클라명: " + ((EveClientData)lbEveClients.SelectedItem).MainWindowTitle.Split(" - ")[1];
+            lblSelectedClientHotKey.Content = "설정된 키: " + ((EveClientData)lbEveClients.SelectedItem).HotKeyName;
         }
     }
 
