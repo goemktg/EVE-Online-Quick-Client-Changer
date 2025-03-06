@@ -32,6 +32,19 @@ namespace EVE_Online_Quick_Client_Changer
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+        // title 명으로 window hWnd 찾기
+        // TODO: hwnd 저장해두고 하는게 더 나을수도??
+        [DllImport("user32.dll")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        // 최소화시 윈도우 활성화
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        // 윈도우 가장 위로 올리기
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -85,7 +98,7 @@ namespace EVE_Online_Quick_Client_Changer
                 if (eveClientsPairs.ContainsKey(client.MainWindowTitle))
                 {
                     // Update process ID
-                    client.ProcessID = eveClientsPairs[client.MainWindowTitle];
+                    //client.ProcessID = eveClientsPairs[client.MainWindowTitle];
                     // Update color
                     client.TextColor = "Black";
                     // Remove from Dictionary
@@ -94,7 +107,7 @@ namespace EVE_Online_Quick_Client_Changer
                     // check if hotkey is set
                     if (client.HotKeyVirtualKeyCode != 0)
                     {
-                        try { RegisterHotKeyWrapper(client.HotKeyVirtualKeyCode, client.ProcessID); }
+                        try { RegisterHotKeyWrapper(client.HotKeyVirtualKeyCode, client.MainWindowTitle); }
                         catch (Exception)
                         {
                             MessageBox.Show("단축키 등록에 실패했습니다. 다른 키를 선택해주세요.");
@@ -116,7 +129,6 @@ namespace EVE_Online_Quick_Client_Changer
                 // Add new client to list
                 EveClients.Add(new EveClientData
                 {
-                    ProcessID = client.Value,
                     MainWindowTitle = client.Key,
 
                     // It is placeholder value
@@ -134,7 +146,7 @@ namespace EVE_Online_Quick_Client_Changer
             btnClientReload.IsEnabled = true;
         }
 
-        private void RegisterHotKeyWrapper(uint hotKeyVirtualKeyCode, int processID)
+        private void RegisterHotKeyWrapper(uint hotKeyVirtualKeyCode, string mainWindowTitle)
         {
             // Register hotkey if not already registered
             if (!IsThisKeyCodeAlreadyRegistered(hotKeyVirtualKeyCode))
@@ -151,7 +163,7 @@ namespace EVE_Online_Quick_Client_Changer
                 else
                 {
                     // Add to registered hotkeys
-                    RegisteredHotkeys.Add(hotKeyIndex, new HotKeyData { HotKeyVirtualKeyCode = hotKeyVirtualKeyCode, ProcessID = processID });
+                    RegisteredHotkeys.Add(hotKeyIndex, new HotKeyData { HotKeyVirtualKeyCode = hotKeyVirtualKeyCode, MainWindowTitle = mainWindowTitle });
                 }
             }
         }
@@ -267,7 +279,13 @@ namespace EVE_Online_Quick_Client_Changer
                 if (RegisteredHotkeys.ContainsKey(hotkeyId))
                 {
                     // Handle the hotkey press
-                    MessageBox.Show($"Hotkey {hotkeyId} pressed!");
+                    IntPtr hWnd = FindWindow(null, RegisteredHotkeys[hotkeyId].MainWindowTitle);
+
+                    if (!hWnd.Equals(IntPtr.Zero)) {
+                        ShowWindowAsync(hWnd, 1);
+                        SetForegroundWindow(hWnd);
+                    }
+
                     handled = true;
                 }
                 else
@@ -282,12 +300,11 @@ namespace EVE_Online_Quick_Client_Changer
     struct HotKeyData
     {
         public uint HotKeyVirtualKeyCode;
-        public int ProcessID;
+        public string MainWindowTitle;
     }
 
     public class EveClientData
     {
-        public required int ProcessID { get; set; }
         public required string MainWindowTitle { get; set; }
         public required string HotKeyName { get; set; }
         public required uint HotKeyVirtualKeyCode { get; set; }
